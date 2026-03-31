@@ -1,0 +1,53 @@
+<div class="form-container">
+  <h2>Create Account</h2>
+  <form>
+    <div class="field">
+      @let username = form.username();
+      @let showUsernameError = username.invalid() && username.touched();
+      <label for="username">Username</label>
+      <input
+        id="username"
+        type="text"
+        [field]="form.username"
+        [class.error]="showUsernameError"
+      />
+      @if (username.pending()) {
+        <p class="info">Checking availability...</p>
+      }
+      @if (username.dirty()) {
+        @for (error of username.errors(); track error.kind) {
+          @if (error.kind === 'username_taken') {
+            <p class="error-message">{{ error.message }}</p>
+          }
+        }
+      } @else if (showUsernameError) {
+        <ul class="error-message">
+          @for (error of username.errors(); track error.kind) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+    <div class="field">
+      @let email = form.email();
+      @let showEmailError = email.invalid() && email.touched();
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        [field]="form.email"
+        [class.error]="showEmailError"
+      />
+      @if (showEmailError) {
+        <ul class="error-message">
+          @for (error of email.errors(); track error.kind) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+    <button type="submit" [disabled]="form().invalid()">
+      Create Account
+    </button>
+  </form>
+</div>
