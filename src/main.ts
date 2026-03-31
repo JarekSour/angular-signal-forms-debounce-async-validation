@@ -1,5 +1,7 @@
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
+import { emailAvailabilityMockInterceptor } from './email-availability.mock.interceptor';
 import { FormComponent } from './form/form.component';
 
 @Component({
@@ -12,5 +14,8 @@ export class App {
 }
 
 bootstrapApplication(App, {
-  providers: [ provideZonelessChangeDetection() ]
+  providers: [
+    provideZonelessChangeDetection(),
+    provideHttpClient(withInterceptors([emailAvailabilityMockInterceptor])),
+  ],
 });

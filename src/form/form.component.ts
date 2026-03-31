@@ -1,9 +1,21 @@
 import { ChangeDetectionStrategy, Component, resource, signal } from '@angular/core';
-import { form, FormField, required, email, validateAsync, debounce } from '@angular/forms/signals';
+import {
+  debounce,
+  email,
+  form,
+  FormField,
+  required,
+  validateAsync,
+  validateHttp,
+} from '@angular/forms/signals';
 
 interface SignUpForm {
   username: string;
   email: string;
+}
+
+interface EmailCheckResponse {
+  available: boolean;
 }
 
 @Component({
@@ -14,7 +26,7 @@ interface SignUpForm {
   imports: [FormField],
 })
 export class FormComponent {
-  protected model = signal<SignUpForm>({
+  	protected model = signal<SignUpForm>({
 		username: '',
 		email: '',
 	});
@@ -24,10 +36,8 @@ export class FormComponent {
 		required(s.email, {message: 'An email address is required'});
 		email(s.email, {message: 'Please enter a valid email address'});
 
-		debounce(s.username, 500);
-
 		validateAsync(s.username, {
-			// debounce: 500,
+			// debounce: 2000,
 			params: ctx => {
 				const val = ctx.value();
 				if (!val || val.length < 3) return undefined;
@@ -56,14 +66,43 @@ export class FormComponent {
 				return null;
 			},
 		});
+		debounce(s.username, 2000);
+
+		validateHttp(s.email, {
+			// debounce: 2000,
+			request: ctx => this.emailAvailabilityUrl(ctx.value()),
+			onSuccess: (result: EmailCheckResponse) => {
+				if (!result.available) {
+					return {
+						kind: 'email_taken',
+						message: 'This email is already registered',
+					};
+				}
+				return null;
+			},
+			onError: (error: unknown) => {
+				console.error('Email validation error:', error);
+				return null;
+			},
+		});
+		debounce(s.email, 2000);
 	});
 
 	private checkUsernameAvailability(username: string): Promise<boolean> {
     return new Promise(resolve => {
         setTimeout(() => {
-            const taken = ['admin', 'test', 'brian'];
+            const taken = ['test'];
             resolve(!taken.includes(username.toLowerCase()));
         }, 2500);
     });
+	}
+
+	private emailAvailabilityUrl(value: string | undefined): string | undefined {
+		const email = value?.trim();
+		if (!email || email.length < 5) {
+			return undefined;
+		}
+		const query = new URLSearchParams({ email }).toString();
+		return `/api/v1/signup/email-availability?${query}`;
 	}
 }

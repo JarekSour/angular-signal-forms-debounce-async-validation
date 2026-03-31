@@ -1,6 +1,6 @@
 <div class="form-container">
   <h2>Create Account</h2>
-  <form>
+  <form autocomplete="off">
     <div class="field">
       @let username = form.username();
       @let showUsernameError = username.invalid() && username.touched();
@@ -8,6 +8,7 @@
       <input
         id="username"
         type="text"
+        autocomplete="off"
         [formField]="form.username"
         [class.error]="showUsernameError"
       />
@@ -35,9 +36,13 @@
       <input
         id="email"
         type="email"
+        autocomplete="off"
         [formField]="form.email"
         [class.error]="showEmailError"
       />
+      @if (email.pending()) {
+        <p class="info">Verifying email…</p>
+      }
       @if (showEmailError) {
         <ul class="error-message">
           @for (error of email.errors(); track error.kind) {
