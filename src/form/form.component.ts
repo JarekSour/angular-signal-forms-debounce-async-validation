@@ -37,7 +37,7 @@ export class FormComponent {
 		email(s.email, {message: 'Please enter a valid email address'});
 
 		validateAsync(s.username, {
-			// debounce: 2000,
+			debounce: 2000,
 			params: ctx => {
 				const val = ctx.value();
 				if (!val || val.length < 3) return undefined;
@@ -66,10 +66,10 @@ export class FormComponent {
 				return null;
 			},
 		});
-		debounce(s.username, 2000);
+		// debounce(s.username, 2000);
 
 		validateHttp(s.email, {
-			// debounce: 2000,
+			debounce: 2000,
 			request: ctx => this.emailAvailabilityUrl(ctx.value()),
 			onSuccess: (result: EmailCheckResponse) => {
 				if (!result.available) {
@@ -85,7 +85,7 @@ export class FormComponent {
 				return null;
 			},
 		});
-		debounce(s.email, 2000);
+		// debounce(s.email, 2000);
 	});
 
 	private checkUsernameAvailability(username: string): Promise<boolean> {
