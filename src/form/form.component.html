@@ -1,27 +1,6 @@
 <div class="form-container">
   <h2>Create Account</h2>
-  <form>
-    <div class="field">
-      @let username = form.username();
-      @let showUsernameError = username.invalid() && username.touched();
-      <label for="username">Username</label>
-      <input
-        id="username"
-        type="text"
-        [formField]="form.username"
-        [class.error]="showUsernameError"
-      />
-      @if (username.pending()) {
-        <p class="info">Checking availability...</p>
-      }
-      @if (showUsernameError) {
-        <ul class="error-message">
-          @for (error of username.errors(); track error.kind) {
-            <li>{{ error.message }}</li>
-          }
-        </ul>
-      }
-    </div>
+  <form (submit)="onSubmit($event)">
     <div class="field">
       @let email = form.email();
       @let showEmailError = email.invalid() && email.touched();
@@ -36,12 +15,20 @@
         <p class="info">Verifying email…</p>
       }
       @if (showEmailError) {
-        <ul class="error-message">
+        <ul class="error-message">          
           @for (error of email.errors(); track error.kind) {
             <li>{{ error.message }}</li>
           }
         </ul>
       }
+
+      <p>Form pending: {{form().pending()}}</p>
+      <p>Form status: {{form().valid()}}</p>
+
+      @if(form().valid()){
+        <p style="color: green;">VALID FORM!!!!!</p>
+      }
+
     </div>
     <button type="submit" [disabled]="form().invalid()">
       Create Account
