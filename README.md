@@ -28,8 +28,3 @@ With Angular 22, you can now pass a `debounce` timer directly into the configura
    ```
 
 3. Open your browser to `http://localhost:4200`.
-
-## Related
-
-- [Watch the tutorial on YouTube](https://youtu.be/4ynDt0-Cj7A)
-- [Signal Forms full course](https://www.udemy.com/course/angular-signal-forms/?couponCode=021409EC66FC6440B867)
